@@ -50,6 +50,16 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
     bottom: 0,
   },
+  nav: {
+    // "&:focus": {
+    //   outline: "1px dashed blue",
+    // },
+  },
+  element: {
+    outline: "1px dashed blue",
+    // "&:focus": {
+    // },
+  },
 }));
 const actions = [
   { name: "Text", icon: <TextFieldsIcon />, value: "text" },
@@ -61,8 +71,8 @@ const DragWrapper = () => {
   const [dialog, setDialog] = React.useState(null);
   const [nodes, setNodes] = React.useState([]);
   const [stickerOpen, setStickerOpen] = React.useState(false);
+  const [ind, setInd] = React.useState(-1);
 
-  
   const handleAddImage = () => {
     let input = document.createElement("input");
     input.type = "file";
@@ -74,7 +84,15 @@ const DragWrapper = () => {
         var fr = new FileReader();
         fr.onload = function () {
           let src = fr.result;
-          let ele = <img src={src} alt="" width="100%" height="100%" />;
+          let ele = (
+            <img
+              className={classes.nav}
+              src={src}
+              alt=""
+              width="100%"
+              height="100%"
+            />
+          );
           addElement(ele);
         };
         fr.readAsDataURL(file);
@@ -83,17 +101,40 @@ const DragWrapper = () => {
     };
     input.click();
   };
- 
-const handleSticker=(src)=>{
-  addElement(<img src={src} alt="" width="100%" height="100%" />)
-}
+
+  const handleSticker = (src) => {
+    addElement(
+      <img
+        className={classes.nav}
+        src={src}
+        alt=""
+        width="100%"
+        height="100%"
+      />
+    );
+  };
 
   const closeDialog = () => {
     setDialog(null);
   };
-  
+
   const addElement = (ele) => {
     setNodes([...nodes, ele]);
+    setInd(-1);
+  };
+  const dragStart = (e, index) => {
+    setInd(index);
+    // console.log(nodes[index].target)
+    // nodes[index].props.style.outline="1px dashed rgb(200,200,200)";
+    // e.target.style.border = "1px dashed rgb(200,200,200)";
+    // let nd = nodes.find((node) => node === e.target);
+    // console.log(index);
+  };
+
+  const dragStop = (e, index) => {
+    // nodes[index].style.outline="none";
+    // console.log(e.target);
+    // e.target.style.border = "none";
   };
 
   return (
@@ -101,6 +142,9 @@ const handleSticker=(src)=>{
       {nodes.map((ele, index) => (
         <Rnd
           key={index}
+          className={ind === index && classes.element}
+          onDragStart={(e) => dragStart(e, index)}
+          onDragStop={(e) => dragStop(e, index)}
           default={{
             x: 20,
             y: 20,
@@ -112,33 +156,49 @@ const handleSticker=(src)=>{
         </Rnd>
       ))}
 
-      <BottomNavigation className={classes.bottomNav}>
+      <BottomNavigation
+        className={classes.bottomNav}
+        onClick={() => setInd(-1)}
+      >
         <BottomNavigationAction
           label="Background"
           value="background"
           icon={<WallpaperIcon />}
+          className={classes.nav}
           onClick={handleAddImage}
         />
         <BottomNavigationAction
           label="Stickers"
           value="stickers"
           icon={<MoodIcon />}
-          onClick={(e)=>setStickerOpen(e.currentTarget)}
+          className={classes.nav}
+          onClick={(e) => setStickerOpen(e.currentTarget)}
         />
         <BottomNavigationAction
           label="Text"
           value="text"
           icon={<TextFieldsIcon />}
+          className={classes.nav}
           onClick={() => setDialog("text")}
         />
-        <BottomNavigationAction label="Crop" value="crop" icon={<CropIcon />} />
+        <BottomNavigationAction
+          label="Crop"
+          value="crop"
+          icon={<CropIcon />}
+          className={classes.nav}
+        />
       </BottomNavigation>
       <TextDialog
         open={dialog === "text"}
         onClose={closeDialog}
         addElement={addElement}
       />
-      <Sticker anchorEl={stickerOpen} open ={!!stickerOpen} onClose={()=>setStickerOpen(null)} handleSticker={handleSticker}/>
+      <Sticker
+        anchorEl={stickerOpen}
+        open={!!stickerOpen}
+        onClose={() => setStickerOpen(null)}
+        handleSticker={handleSticker}
+      />
     </div>
   );
 };
