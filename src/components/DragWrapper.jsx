@@ -13,16 +13,24 @@ import SaveIcon from "@material-ui/icons/Save";
 import PrintIcon from "@material-ui/icons/Print";
 import ShareIcon from "@material-ui/icons/Share";
 import FavoriteIcon from "@material-ui/icons/Favorite";
-import TextFieldsIcon from "@material-ui/icons/TextFields";
 import ImageIcon from "@material-ui/icons/Image";
 import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
 import TextDialog from "./TextDialog";
 import { Rnd } from "react-rnd";
 import { v4 as uuid } from "uuid";
+import BottomNavigation from "@material-ui/core/BottomNavigation";
+import BottomNavigationAction from "@material-ui/core/BottomNavigationAction";
+import MoodIcon from "@material-ui/icons/Mood";
+import TextFieldsIcon from "@material-ui/icons/TextFields";
+import CropIcon from "@material-ui/icons/Crop";
+import WallpaperIcon from "@material-ui/icons/Wallpaper";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     height: "100vh",
+    position: "relative",
+    width: "100%",
+    overflow: "hidden",
   },
   speedDial: {
     position: "absolute",
@@ -35,6 +43,11 @@ const useStyles = makeStyles((theme) => ({
       top: theme.spacing(2),
       left: theme.spacing(2),
     },
+  },
+  bottomNav: {
+    position: "absolute",
+    width: "100%",
+    bottom: 0,
   },
 }));
 const actions = [
@@ -102,26 +115,26 @@ const DragWrapper = () => {
         </Rnd>
       ))}
 
-      <SpeedDial
-        ariaLabel="SpeedDial example"
-        className={classes.speedDial}
-        hidden={hidden}
-        icon={<SpeedDialIcon />}
-        onClose={handleClose}
-        onOpen={handleOpen}
-        open={open}
-        direction={"up"}
-      >
-        {actions.map((action) => (
-          <SpeedDialAction
-            key={action.name}
-            icon={action.icon}
-            tooltipTitle={action.name}
-            onClick={() => dialClick(action.value)}
-          />
-        ))}
-      </SpeedDial>
-
+      <BottomNavigation className={classes.bottomNav}>
+        <BottomNavigationAction
+          label="Background"
+          value="background"
+          icon={<WallpaperIcon />}
+          onClick={handleAddImage}
+        />
+        <BottomNavigationAction
+          label="Stickers"
+          value="stickers"
+          icon={<MoodIcon />}
+        />
+        <BottomNavigationAction
+          label="Text"
+          value="text"
+          icon={<TextFieldsIcon />}
+          onClick={() => setDialog("text")}
+        />
+        <BottomNavigationAction label="Crop" value="crop" icon={<CropIcon />} />
+      </BottomNavigation>
       <TextDialog
         open={dialog === "text"}
         onClose={closeDialog}
