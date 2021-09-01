@@ -24,6 +24,7 @@ import MoodIcon from "@material-ui/icons/Mood";
 import TextFieldsIcon from "@material-ui/icons/TextFields";
 import CropIcon from "@material-ui/icons/Crop";
 import WallpaperIcon from "@material-ui/icons/Wallpaper";
+import Sticker from "./Sticker";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -57,13 +58,11 @@ const actions = [
 ];
 const DragWrapper = () => {
   const classes = useStyles();
-  const [open, setOpen] = React.useState(false);
-  const [hidden, setHidden] = React.useState(false);
   const [dialog, setDialog] = React.useState(null);
   const [nodes, setNodes] = React.useState([]);
-  const handleClose = () => {
-    setOpen(false);
-  };
+  const [stickerOpen, setStickerOpen] = React.useState(false);
+
+  
   const handleAddImage = () => {
     let input = document.createElement("input");
     input.type = "file";
@@ -84,17 +83,15 @@ const DragWrapper = () => {
     };
     input.click();
   };
-  const dialClick = (v) => {
-    if (v === "image") handleAddImage();
-    setDialog(v);
-    handleClose();
-  };
+ 
+const handleSticker=(src)=>{
+  addElement(<img src={src} alt="" width="100%" height="100%" />)
+}
+
   const closeDialog = () => {
     setDialog(null);
   };
-  const handleOpen = () => {
-    setOpen(true);
-  };
+  
   const addElement = (ele) => {
     setNodes([...nodes, ele]);
   };
@@ -126,6 +123,7 @@ const DragWrapper = () => {
           label="Stickers"
           value="stickers"
           icon={<MoodIcon />}
+          onClick={(e)=>setStickerOpen(e.currentTarget)}
         />
         <BottomNavigationAction
           label="Text"
@@ -140,6 +138,7 @@ const DragWrapper = () => {
         onClose={closeDialog}
         addElement={addElement}
       />
+      <Sticker anchorEl={stickerOpen} open ={!!stickerOpen} onClose={()=>setStickerOpen(null)} handleSticker={handleSticker}/>
     </div>
   );
 };
