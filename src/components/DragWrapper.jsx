@@ -14,8 +14,9 @@ import CropIcon from "@material-ui/icons/Crop";
 import WallpaperIcon from "@material-ui/icons/Wallpaper";
 import Sticker from "./Sticker";
 // import Text  from "react-editable-and-draggable-text-2";
-import ScaleText from "react-scale-text"
+import ScaleText from "react-scale-text";
 import ImageCropDialog from "./ImageCropDialog";
+import CloseIco from "@material-ui/icons/CloseRounded";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -49,9 +50,28 @@ const useStyles = makeStyles((theme) => ({
   },
   element: {
     outline: "1px dashed blue",
+    position: "relative",
+
     // "&:focus": {
     // },
   },
+  eleWrap: {
+    width: "100%",
+    height: "100%",
+  },
+  closeIco: {
+    position: "absolute",
+    background: "white",
+    borderRadius: 360,
+    top: -15,
+    right: "calc(50% - 15px)",
+    cursor:"pointer",
+    zIndex:5,
+    boxShadow:"1px 2px 5px rgba(0,0,0,0.5)"
+  },
+  hidden:{
+    display:"none !important"
+  }
 }));
 const actions = [
   { name: "Text", icon: <TextFieldsIcon />, value: "text" },
@@ -133,29 +153,45 @@ const DragWrapper = () => {
   };
 
   const resizeEvent = () => {
-    window.dispatchEvent(new Event('resize'));
-  }
+    window.dispatchEvent(new Event("resize"));
+  };
+
+  const handleDelete = (ind) => {
+    let newNodes = nodes;
+    delete newNodes[ind];
+    setNodes([...newNodes]);
+    // let newNodes = nodes.filter((ele, index) => index !== ind);
+    // setNodes([...newNodes]);
+  };
 
   return (
     <div className={classes.root} style={{ backgroundImage: `url(${bg})` }}>
-      
-      {nodes.map((ele, index) => (
-        <Rnd
-          key={index}
-          className={ind === index && classes.element}
-          onDragStart={(e) => dragStart(e, index)}
-          onDragStop={(e) => dragStop(e, index)}
-          onResize={resizeEvent}
-          default={{
-            x: 20,
-            y: 20,
-            width: 200,
-            // height: 200,
-          }}
-        >
-          {ele}
-        </Rnd>
-      ))}
+      {nodes.map(
+        (ele, index) =>
+          ele && (
+            <Rnd
+              key={index}
+              className={ind === index && classes.element}
+              onDragStart={(e) => dragStart(e, index)}
+              onDragStop={(e) => dragStop(e, index)}
+              onResize={resizeEvent}
+              default={{
+                x: 20,
+                y: 20,
+                width: 200,
+                // height: 200,
+              }}
+            >
+              <div className={classes.eleWrap}>
+                <CloseIco
+                  className={ind === index ? classes.closeIco:classes.hidden}
+                  onClick={() => handleDelete(index)}
+                />
+                {ele}
+              </div>
+            </Rnd>
+          )
+      )}
 
       <BottomNavigation
         className={classes.bottomNav}
@@ -173,7 +209,10 @@ const DragWrapper = () => {
           value="stickers"
           icon={<MoodIcon />}
           className={classes.nav}
-          onClick={(e) => { setStickerOpen(e.currentTarget); setStickerAnchor(e.currentTarget); }}
+          onClick={(e) => {
+            setStickerOpen(e.currentTarget);
+            setStickerAnchor(e.currentTarget);
+          }}
         />
         <BottomNavigationAction
           label="Text"
@@ -181,7 +220,7 @@ const DragWrapper = () => {
           icon={<TextFieldsIcon />}
           className={classes.nav}
           onClick={() => setDialog("text")}
-          />
+        />
         <BottomNavigationAction
           label="Crop"
           value="crop"

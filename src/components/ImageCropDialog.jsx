@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Dialog, makeStyles } from "@material-ui/core";
+import { Button, Card, Dialog, makeStyles } from "@material-ui/core";
 import ReactCrop from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 
@@ -9,7 +9,7 @@ const useStyles = makeStyles((theme) => ({
 
 const ImageCropDialog = ({ open, onClose, imgSrc, setImg }) => {
   const classes = useStyles();
-  const [crop, setCrop] = React.useState({ aspect: 16 / 9 });
+  const [crop, setCrop] = React.useState({});
   let imageRef = React.useRef();
 
   const onImageLoaded = (image) => {
@@ -27,9 +27,9 @@ const ImageCropDialog = ({ open, onClose, imgSrc, setImg }) => {
         crop,
         "newFile.jpeg"
       );
-      console.log("cropped")
-      setCrop({ aspect: 16 / 9 })
-      onClose()
+      console.log("cropped");
+      setCrop({});
+      onClose();
       setImg(croppedImageUrl);
     }
   };
@@ -77,9 +77,15 @@ const ImageCropDialog = ({ open, onClose, imgSrc, setImg }) => {
     });
   };
 
+  const clearBg = () => {
+    onClose();
+    window.URL.revokeObjectURL(imgSrc);
+    setImg("");
+  };
+
   return (
     <Dialog onClose={onClose} open={open} className={classes.root}>
-      <Card style={{ padding: 30 }}>
+      <Card style={{ padding: 20 }}>
         <ReactCrop
           src={imgSrc}
           crop={crop}
@@ -87,6 +93,15 @@ const ImageCropDialog = ({ open, onClose, imgSrc, setImg }) => {
           onComplete={onCropComplete}
           onImageLoaded={onImageLoaded}
         />
+        <Button
+          fullWidth
+          variant="outlined"
+          style={{ marginTop: 10 }}
+          color="primary"
+          onClick={clearBg}
+        >
+          Clear Background
+        </Button>
       </Card>
     </Dialog>
   );
