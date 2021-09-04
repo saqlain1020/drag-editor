@@ -1,18 +1,6 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import FormLabel from "@material-ui/core/FormLabel";
-import Radio from "@material-ui/core/Radio";
-import RadioGroup from "@material-ui/core/RadioGroup";
-import Switch from "@material-ui/core/Switch";
-import SpeedDial from "@material-ui/lab/SpeedDial";
-import SpeedDialIcon from "@material-ui/lab/SpeedDialIcon";
-import SpeedDialAction from "@material-ui/lab/SpeedDialAction";
-import FileCopyIcon from "@material-ui/icons/FileCopyOutlined";
-import SaveIcon from "@material-ui/icons/Save";
-import PrintIcon from "@material-ui/icons/Print";
-import ShareIcon from "@material-ui/icons/Share";
-import FavoriteIcon from "@material-ui/icons/Favorite";
+
 import ImageIcon from "@material-ui/icons/Image";
 import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
 import TextDialog from "./TextDialog";
@@ -25,6 +13,9 @@ import TextFieldsIcon from "@material-ui/icons/TextFields";
 import CropIcon from "@material-ui/icons/Crop";
 import WallpaperIcon from "@material-ui/icons/Wallpaper";
 import Sticker from "./Sticker";
+// import Text  from "react-editable-and-draggable-text-2";
+import ScaleText from "react-scale-text"
+import ImageCropDialog from "./ImageCropDialog";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -32,6 +23,7 @@ const useStyles = makeStyles((theme) => ({
     position: "relative",
     width: "100%",
     overflow: "hidden",
+    backgroundSize: "cover",
   },
   speedDial: {
     position: "absolute",
@@ -72,6 +64,8 @@ const DragWrapper = () => {
   const [nodes, setNodes] = React.useState([]);
   const [stickerOpen, setStickerOpen] = React.useState(false);
   const [ind, setInd] = React.useState(-1);
+  const [stickerAnchor, setStickerAnchor] = React.useState(null);
+  const [bg, setBg] = React.useState("");
 
   const handleAddImage = () => {
     let input = document.createElement("input");
@@ -84,16 +78,17 @@ const DragWrapper = () => {
         var fr = new FileReader();
         fr.onload = function () {
           let src = fr.result;
-          let ele = (
-            <img
-              className={classes.nav}
-              src={src}
-              alt=""
-              width="100%"
-              height="100%"
-            />
-          );
-          addElement(ele);
+          setBg(src);
+          // let ele = (
+          //   <img
+          //     className={classes.nav}
+          //     src={src}
+          //     alt=""
+          //     width="100%"
+          //     height="100%"
+          //   />
+          // );
+          // addElement(ele);
         };
         fr.readAsDataURL(file);
       }
@@ -137,14 +132,20 @@ const DragWrapper = () => {
     // e.target.style.border = "none";
   };
 
+  const resizeEvent = () => {
+    window.dispatchEvent(new Event('resize'));
+  }
+
   return (
-    <div className={classes.root}>
+    <div className={classes.root} style={{ backgroundImage: `url(${bg})` }}>
+      
       {nodes.map((ele, index) => (
         <Rnd
           key={index}
           className={ind === index && classes.element}
           onDragStart={(e) => dragStart(e, index)}
           onDragStop={(e) => dragStop(e, index)}
+          onResize={resizeEvent}
           default={{
             x: 20,
             y: 20,
@@ -172,7 +173,7 @@ const DragWrapper = () => {
           value="stickers"
           icon={<MoodIcon />}
           className={classes.nav}
-          onClick={(e) => setStickerOpen(e.currentTarget)}
+          onClick={(e) => { setStickerOpen(e.currentTarget); setStickerAnchor(e.currentTarget); }}
         />
         <BottomNavigationAction
           label="Text"
@@ -180,12 +181,13 @@ const DragWrapper = () => {
           icon={<TextFieldsIcon />}
           className={classes.nav}
           onClick={() => setDialog("text")}
-        />
+          />
         <BottomNavigationAction
           label="Crop"
           value="crop"
           icon={<CropIcon />}
           className={classes.nav}
+          onClick={() => setDialog("crop")}
         />
       </BottomNavigation>
       <TextDialog
@@ -193,8 +195,15 @@ const DragWrapper = () => {
         onClose={closeDialog}
         addElement={addElement}
       />
+      <ImageCropDialog
+        imgSrc={bg}
+        setImg={setBg}
+        open={dialog === "crop"}
+        onClose={closeDialog}
+        addElement={addElement}
+      />
       <Sticker
-        anchorEl={stickerOpen}
+        anchorEl={stickerAnchor}
         open={!!stickerOpen}
         onClose={() => setStickerOpen(null)}
         handleSticker={handleSticker}

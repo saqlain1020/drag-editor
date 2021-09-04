@@ -11,6 +11,8 @@ import {
 } from "@material-ui/core";
 import { v4 as uuid } from "uuid";
 import { ChromePicker } from "react-color";
+import ScaleText from "react-scale-text";
+
 const useStyles = makeStyles((theme) => ({
   root: {},
   colorPicker: {
@@ -82,23 +84,26 @@ const TextDialog = ({ open, onClose, addElement }) => {
   };
   const submit = () => {
     let ele = (
+      <ScaleText>
+
       <p
         style={{
           color: color.hex,
-          fontSize: `${fontSize}px`,
+          // fontSize: `${fontSize}px`,
           fontWeight,
-          whiteSpace: "pre",
-          display: "inline-block",
+          // whiteSpace: "pre",
+          // display: "inline-block",
           fontFamily,
         }}
       >
         {text}
       </p>
+       </ScaleText>
     );
     addElement(ele);
     onClose();
   };
-  
+
   return (
     <Dialog onClose={onClose} open={open} className={classes.root}>
       <Card style={{ padding: 30 }}>
@@ -120,15 +125,15 @@ const TextDialog = ({ open, onClose, addElement }) => {
             />
           </Grid>
 
-          <Grid item xs={12} sm={6}>
+          {/* <Grid item xs={12} sm={6}>
             <TextField
               label="Font Size"
               fullWidth
               value={fontSize}
               type="number"
               onChange={(e) => setSize(e.target.value)}
-            />
-          </Grid>
+            /> */}
+          {/* </Grid> */}
           <Grid item xs={12} sm={6}>
             <TextField
               label="Font Weight"
@@ -143,7 +148,7 @@ const TextDialog = ({ open, onClose, addElement }) => {
             </TextField>
           </Grid>
 
-          <Grid item xs={"12"}>
+          <Grid item xs={12} sm={6}>
             <TextField
               label="Font Style"
               value={fontFamily}
