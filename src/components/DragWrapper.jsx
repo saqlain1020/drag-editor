@@ -49,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
     // },
   },
   element: {
-    outline: "1px dashed blue",
+    outline: "1px solid blue",
     position: "relative",
 
     // "&:focus": {
@@ -63,8 +63,8 @@ const useStyles = makeStyles((theme) => ({
     position: "absolute",
     background: "white",
     borderRadius: 360,
-    top: -15,
-    right: "calc(50% - 15px)",
+    top: -10,
+    left: -10,
     cursor:"pointer",
     zIndex:5,
     boxShadow:"1px 2px 5px rgba(0,0,0,0.5)"
