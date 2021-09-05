@@ -83,22 +83,22 @@ const TextDialog = ({ open, onClose, addElement }) => {
     setColor(color);
   };
   const submit = () => {
+    if (!text) return;
     let ele = (
       <ScaleText>
-
-      <p
-        style={{
-          color: color.hex,
-          // fontSize: `${fontSize}px`,
-          fontWeight,
-          // whiteSpace: "pre",
-          // display: "inline-block",
-          fontFamily,
-        }}
-      >
-        {text}
-      </p>
-       </ScaleText>
+        <p
+          style={{
+            color: color.hex,
+            // fontSize: `${fontSize}px`,
+            fontWeight,
+            whiteSpace: "pre",
+            // display: "inline-block",
+            fontFamily,
+          }}
+        >
+          {text}
+        </p>
+      </ScaleText>
     );
     addElement(ele);
     onClose();
