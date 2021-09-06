@@ -17,6 +17,7 @@ import Sticker from "./Sticker";
 import ScaleText from "react-scale-text";
 import ImageCropDialog from "./ImageCropDialog";
 import CloseIco from "@material-ui/icons/CloseRounded";
+import TextStyleBar from "./TextStyleBar";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -65,13 +66,13 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: 360,
     top: -10,
     left: -10,
-    cursor:"pointer",
-    zIndex:5,
-    boxShadow:"1px 2px 5px rgba(0,0,0,0.5)"
+    cursor: "pointer",
+    zIndex: 5,
+    boxShadow: "1px 2px 5px rgba(0,0,0,0.5)",
   },
-  hidden:{
-    display:"none !important"
-  }
+  hidden: {
+    display: "none !important",
+  },
 }));
 const actions = [
   { name: "Text", icon: <TextFieldsIcon />, value: "text" },
@@ -86,6 +87,8 @@ const DragWrapper = () => {
   const [ind, setInd] = React.useState(-1);
   const [stickerAnchor, setStickerAnchor] = React.useState(null);
   const [bg, setBg] = React.useState("");
+  const [textAnchor, setTextAnchor] = React.useState(null);
+  const [currentTextData, setCurrentTextData] = React.useState(null);
 
   const handleAddImage = () => {
     let input = document.createElement("input");
@@ -164,6 +167,17 @@ const DragWrapper = () => {
     // setNodes([...newNodes]);
   };
 
+  const textEdit = (e) => {
+    setTextAnchor(e.currentTarget);
+    setCurrentTextData({
+      color: e.currentTarget.style.color || "black",
+      fontWeight: e.currentTarget.style.fontWeight,
+      textDecoration: e.currentTarget.style.textDecoration,
+      fontFamily: e.currentTarget.style.fontFamily,
+      textAlign: e.currentTarget.style.textAlign,
+    });
+  };
+
   return (
     <div className={classes.root} style={{ backgroundImage: `url(${bg})` }}>
       {nodes.map(
@@ -184,7 +198,7 @@ const DragWrapper = () => {
             >
               <div className={classes.eleWrap}>
                 <CloseIco
-                  className={ind === index ? classes.closeIco:classes.hidden}
+                  className={ind === index ? classes.closeIco : classes.hidden}
                   onClick={() => handleDelete(index)}
                 />
                 {ele}
@@ -233,6 +247,7 @@ const DragWrapper = () => {
         open={dialog === "text"}
         onClose={closeDialog}
         addElement={addElement}
+        textEdit={textEdit}
       />
       <ImageCropDialog
         imgSrc={bg}
@@ -246,6 +261,13 @@ const DragWrapper = () => {
         open={!!stickerOpen}
         onClose={() => setStickerOpen(null)}
         handleSticker={handleSticker}
+      />
+      <TextStyleBar
+        open={!!textAnchor}
+        anchor={textAnchor}
+        onClose={() => setTextAnchor(null)}
+        currentTextData={currentTextData}
+        setCurrentTextData={setCurrentTextData}
       />
     </div>
   );

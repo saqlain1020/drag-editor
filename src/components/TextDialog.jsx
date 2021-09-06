@@ -9,8 +9,6 @@ import {
   TextField,
   Typography,
 } from "@material-ui/core";
-import { v4 as uuid } from "uuid";
-import { ChromePicker } from "react-color";
 import ScaleText from "react-scale-text";
 
 const useStyles = makeStyles((theme) => ({
@@ -71,29 +69,19 @@ const fonts = [
   },
 ];
 
-const TextDialog = ({ open, onClose, addElement }) => {
+const TextDialog = ({ open, onClose, addElement, textEdit }) => {
   const classes = useStyles();
-  const [color, setColor] = React.useState("#000000");
-  const [fontSize, setSize] = React.useState(12);
   const [text, setText] = React.useState("");
-  const [fontWeight, setWeight] = React.useState(400);
-  const [fontFamily, setFamily] = React.useState("");
 
-  const handleColor = (color) => {
-    setColor(color);
-  };
   const submit = () => {
     if (!text) return;
     let ele = (
       <ScaleText>
         <p
+          onDoubleClick={textEdit}
           style={{
-            color: color.hex,
-            // fontSize: `${fontSize}px`,
-            fontWeight,
             whiteSpace: "pre",
-            // display: "inline-block",
-            fontFamily,
+            fontFamily: "Arial, sans-serif",
           }}
         >
           {text}
@@ -106,7 +94,7 @@ const TextDialog = ({ open, onClose, addElement }) => {
 
   return (
     <Dialog onClose={onClose} open={open} className={classes.root}>
-      <Card style={{ padding: 30 }}>
+      <Card style={{ padding: 20 }}>
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <Typography variant="h5">
@@ -120,58 +108,7 @@ const TextDialog = ({ open, onClose, addElement }) => {
               multiline
               rows={6}
               value={text}
-              // label=""0
               onChange={(e) => setText(e.target.value)}
-            />
-          </Grid>
-
-          {/* <Grid item xs={12} sm={6}>
-            <TextField
-              label="Font Size"
-              fullWidth
-              value={fontSize}
-              type="number"
-              onChange={(e) => setSize(e.target.value)}
-            /> */}
-          {/* </Grid> */}
-          <Grid item xs={12} sm={6}>
-            <TextField
-              label="Font Weight"
-              value={fontWeight}
-              select
-              fullWidth
-              onChange={(e) => setWeight(e.target.value)}
-            >
-              <MenuItem value="400">400</MenuItem>
-              <MenuItem value="600">600</MenuItem>
-              <MenuItem value="800"> 800</MenuItem>
-            </TextField>
-          </Grid>
-
-          <Grid item xs={12} sm={6}>
-            <TextField
-              label="Font Style"
-              value={fontFamily}
-              select
-              fullWidth
-              onChange={(e) => setFamily(e.target.value)}
-            >
-              {fonts.map((item) => (
-                <MenuItem
-                  key={uuid()}
-                  value={item.value}
-                  style={{ fontFamily: item.value }}
-                >
-                  {item.name}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-          <Grid item xs={12}>
-            <ChromePicker
-              color={color}
-              onChange={handleColor}
-              className={classes.colorPicker}
             />
           </Grid>
           <Grid
