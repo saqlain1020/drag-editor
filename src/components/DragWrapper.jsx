@@ -79,6 +79,8 @@ const actions = [
   { name: "Image", icon: <ImageIcon />, value: "image" },
   { name: "Box", icon: <CheckBoxOutlineBlankIcon />, value: "box" },
 ];
+var target = null;
+
 const DragWrapper = () => {
   const classes = useStyles();
   const [dialog, setDialog] = React.useState(null);
@@ -178,6 +180,19 @@ const DragWrapper = () => {
     });
   };
 
+  const textClick = (e) => {
+    console.log("asd")
+    if (e.currentTarget === target) {
+      console.log("double");
+      textEdit(e);
+    }
+    target = e.currentTarget;
+    setTimeout(() => {
+      // if (target === e.currentTarget)
+       target = null;
+    }, 200);
+  };
+
   return (
     <div className={classes.root} style={{ backgroundImage: `url(${bg})` }}>
       {nodes.map(
@@ -200,6 +215,8 @@ const DragWrapper = () => {
                 <CloseIco
                   className={ind === index ? classes.closeIco : classes.hidden}
                   onClick={() => handleDelete(index)}
+                  onGotPointerCapture={() => handleDelete(index)}
+                
                 />
                 {ele}
               </div>
@@ -248,6 +265,7 @@ const DragWrapper = () => {
         onClose={closeDialog}
         addElement={addElement}
         textEdit={textEdit}
+        textClick={textClick}
       />
       <ImageCropDialog
         imgSrc={bg}

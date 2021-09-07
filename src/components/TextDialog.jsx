@@ -69,16 +69,19 @@ const fonts = [
   },
 ];
 
-const TextDialog = ({ open, onClose, addElement, textEdit }) => {
+const TextDialog = ({ open, onClose, addElement, textEdit,textClick }) => {
   const classes = useStyles();
   const [text, setText] = React.useState("");
-
+  
   const submit = () => {
     if (!text) return;
     let ele = (
       <ScaleText>
         <p
           onDoubleClick={textEdit}
+          // onClick={()=>alert("click")}
+          onGotPointerCapture={textClick}
+          // onClick={textClick}
           style={{
             whiteSpace: "pre",
             fontFamily: "Arial, sans-serif",
@@ -88,6 +91,7 @@ const TextDialog = ({ open, onClose, addElement, textEdit }) => {
         </p>
       </ScaleText>
     );
+
     addElement(ele);
     onClose();
   };
