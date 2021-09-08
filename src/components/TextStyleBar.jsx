@@ -4,7 +4,9 @@ import {
   Grid,
   makeStyles,
   MenuItem,
+  Paper,
   Popover,
+  Popper,
   Select,
   TextField,
 } from "@material-ui/core";
@@ -16,7 +18,9 @@ import FormatAlignRightIcon from "@material-ui/icons/FormatAlignRight";
 import { v4 as uuid } from "uuid";
 
 const useStyles = makeStyles((theme) => ({
-  root: {},
+  root: {
+    top: "-10px !important",
+  },
   btn: {
     minWidth: 0,
     height: 40,
@@ -131,10 +135,15 @@ const TextStyleBar = ({
   };
 
   return (
-    <Popover
+    <Popper
       open={open}
-      onClose={onClose}
+      placement="top"
+      // onClose={onClose}
       anchorEl={anchor}
+      // disableEnforceFocus
+      // disableAutoFocus
+      // hideBackdrop
+
       className={classes.root}
       anchorOrigin={{
         vertical: "top",
@@ -145,123 +154,130 @@ const TextStyleBar = ({
         horizontal: "center",
       }}
     >
-      <TextField
-        // label="Font Style"
-        // value={fontFamily}
-        variant="outlined"
-        size="small"
-        select
-        value={currentTextData?.fontFamily}
-        className={classes.select}
-        // fullWidth
-        onChange={(e) => fontChange(e.target.value)}
-      >
-        {fonts.map((item) => (
-          <MenuItem
-            key={uuid()}
-            value={item.value}
-            style={{ fontFamily: item.value }}
-          >
-            {item.name}
-          </MenuItem>
-        ))}
-      </TextField>
-      <Button
-        className={classes.btn}
-        style={{
-          background:
-            currentTextData?.fontWeight === "bold"
-              ? "rgb(220,220,220)"
-              : "none",
-        }}
-        onClick={fontWeightChange}
-      >
-        <FormatBoldIcon />
-      </Button>
-      <Button
-        className={classes.btn}
-        style={{
-          borderRight: "1px solid rgba(0,0,0,0.2)",
-          background:
-            currentTextData?.textDecoration === "underline"
-              ? "rgb(220,220,220)"
-              : "none",
-        }}
-        onClick={underLineChange}
-      >
-        <FormatUnderlinedIcon />
-      </Button>
-      <Button
-        className={classes.btn}
-        style={{
-          background:
-            currentTextData?.textAlign === "left" ? "rgb(220,220,220)" : "none",
-        }}
-        onClick={() => setAlign("left")}
-      >
-        <FormatAlignLeftIcon />
-      </Button>
-      <Button
-        style={{
-          background:
-            currentTextData?.textAlign === "center"
-              ? "rgb(220,220,220)"
-              : "none",
-        }}
-        className={classes.btn}
-        onClick={() => setAlign("center")}
-      >
-        <FormatAlignCenterIcon />
-      </Button>
-      <Button
-        style={{
-          background:
-            currentTextData?.textAlign === "right"
-              ? "rgb(220,220,220)"
-              : "none",
-        }}
-        className={classes.btn}
-        onClick={() => setAlign("right")}
-      >
-        <FormatAlignRightIcon />
-      </Button>
-      <Button
-        className={classes.btn}
-        style={{ borderLeft: "1px solid rgba(0,0,0,0.2)" }}
-        onClick={colorOpenClick}
-      >
-        <div
-          style={{
-            width: 20,
-            height: 20,
-            borderRadius: 360,
-            background: currentTextData?.color,
-          }}
-        />
-      </Button>
-      <Popover
-        open={colorOpen}
-        onClose={() => setColorOpen(false)}
-        anchorEl={colorAnchor}
-      >
-        <Grid container style={{ width: 120 }}>
-          {colors.map((item) => (
-            <Grid key={item} item xs={4}>
-              <Button className={classes.btn} onClick={() => colorSelect(item)}>
-                <div
-                  style={{
-                    width: 20,
-                    height: 20,
-                    borderRadius: 360,
-                    background: item,
-                  }}
-                />
-              </Button>
-            </Grid>
+      <Paper>
+        <TextField
+          // label="Font Style"
+          // value={fontFamily}
+          variant="outlined"
+          size="small"
+          select
+          value={currentTextData?.fontFamily}
+          className={classes.select}
+          // fullWidth
+          onChange={(e) => fontChange(e.target.value)}
+        >
+          {fonts.map((item) => (
+            <MenuItem
+              key={uuid()}
+              value={item.value}
+              style={{ fontFamily: item.value }}
+            >
+              {item.name}
+            </MenuItem>
           ))}
-        </Grid>
-      </Popover>
-    </Popover>
+        </TextField>
+        <Button
+          className={classes.btn}
+          style={{
+            background:
+              currentTextData?.fontWeight === "bold"
+                ? "rgb(220,220,220)"
+                : "none",
+          }}
+          onClick={fontWeightChange}
+        >
+          <FormatBoldIcon />
+        </Button>
+        <Button
+          className={classes.btn}
+          style={{
+            borderRight: "1px solid rgba(0,0,0,0.2)",
+            background:
+              currentTextData?.textDecoration === "underline"
+                ? "rgb(220,220,220)"
+                : "none",
+          }}
+          onClick={underLineChange}
+        >
+          <FormatUnderlinedIcon />
+        </Button>
+        <Button
+          className={classes.btn}
+          style={{
+            background:
+              currentTextData?.textAlign === "left"
+                ? "rgb(220,220,220)"
+                : "none",
+          }}
+          onClick={() => setAlign("left")}
+        >
+          <FormatAlignLeftIcon />
+        </Button>
+        <Button
+          style={{
+            background:
+              currentTextData?.textAlign === "center"
+                ? "rgb(220,220,220)"
+                : "none",
+          }}
+          className={classes.btn}
+          onClick={() => setAlign("center")}
+        >
+          <FormatAlignCenterIcon />
+        </Button>
+        <Button
+          style={{
+            background:
+              currentTextData?.textAlign === "right"
+                ? "rgb(220,220,220)"
+                : "none",
+          }}
+          className={classes.btn}
+          onClick={() => setAlign("right")}
+        >
+          <FormatAlignRightIcon />
+        </Button>
+        <Button
+          className={classes.btn}
+          style={{ borderLeft: "1px solid rgba(0,0,0,0.2)" }}
+          onClick={colorOpenClick}
+        >
+          <div
+            style={{
+              width: 20,
+              height: 20,
+              borderRadius: 360,
+              background: currentTextData?.color,
+            }}
+          />
+        </Button>
+        <Popover
+          open={colorOpen}
+          onClose={() => setColorOpen(false)}
+          anchorEl={colorAnchor}
+        >
+          <Grid container style={{ width: 120 }}>
+            {colors.map((item) => (
+              <Grid key={item} item xs={4}>
+                <Button
+                  className={classes.btn}
+                  onClick={() => colorSelect(item)}
+                >
+                  <div
+                    style={{
+                      width: 20,
+                      height: 20,
+                      borderRadius: 360,
+                      background: item,
+                    }}
+                  />
+                </Button>
+              </Grid>
+            ))}
+          </Grid>
+        </Popover>
+      </Paper>
+    </Popper>
   );
 };
 

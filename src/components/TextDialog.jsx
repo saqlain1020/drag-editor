@@ -69,18 +69,21 @@ const fonts = [
   },
 ];
 
-const TextDialog = ({ open, onClose, addElement, textEdit,textClick }) => {
+const TextDialog = ({ open, onClose, addElement, textEdit, textClick }) => {
   const classes = useStyles();
   const [text, setText] = React.useState("");
-  
+
   const submit = () => {
     if (!text) return;
     let ele = (
       <ScaleText>
         <p
-          onDoubleClick={textEdit}
+         suppressContentEditableWarning
+         contentEditable
+         spellCheck={false}
+          onClick={textEdit}
           // onClick={()=>alert("click")}
-          onGotPointerCapture={textClick}
+          onGotPointerCaptureCapture={textEdit}
           // onClick={textClick}
           style={{
             whiteSpace: "pre",

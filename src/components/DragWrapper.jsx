@@ -91,6 +91,7 @@ const DragWrapper = () => {
   const [bg, setBg] = React.useState("");
   const [textAnchor, setTextAnchor] = React.useState(null);
   const [currentTextData, setCurrentTextData] = React.useState(null);
+  const containerRef = React.useRef();
 
   const handleAddImage = () => {
     let input = document.createElement("input");
@@ -144,18 +145,9 @@ const DragWrapper = () => {
   };
   const dragStart = (e, index) => {
     setInd(index);
-    // console.log(nodes[index].target)
-    // nodes[index].props.style.outline="1px dashed rgb(200,200,200)";
-    // e.target.style.border = "1px dashed rgb(200,200,200)";
-    // let nd = nodes.find((node) => node === e.target);
-    // console.log(index);
   };
 
-  const dragStop = (e, index) => {
-    // nodes[index].style.outline="none";
-    // console.log(e.target);
-    // e.target.style.border = "none";
-  };
+  const dragStop = (e, index) => {};
 
   const resizeEvent = () => {
     window.dispatchEvent(new Event("resize"));
@@ -165,8 +157,7 @@ const DragWrapper = () => {
     let newNodes = nodes;
     delete newNodes[ind];
     setNodes([...newNodes]);
-    // let newNodes = nodes.filter((ele, index) => index !== ind);
-    // setNodes([...newNodes]);
+    setInd(-1);
   };
 
   const textEdit = (e) => {
@@ -181,7 +172,7 @@ const DragWrapper = () => {
   };
 
   const textClick = (e) => {
-    console.log("asd")
+    console.log("asd");
     if (e.currentTarget === target) {
       console.log("double");
       textEdit(e);
@@ -189,12 +180,47 @@ const DragWrapper = () => {
     target = e.currentTarget;
     setTimeout(() => {
       // if (target === e.currentTarget)
-       target = null;
+      target = null;
     }, 200);
   };
 
+  const wrapperClick = (e) => {
+    if (e.target === containerRef.current) {
+      setTextAnchor(null);
+      setInd(-1);
+    }
+  };
+
+  const addTextElement = () => {
+    let node = (
+      <ScaleText>
+        <p
+          suppressContentEditableWarning
+          contentEditable
+          spellCheck={false}
+          onClick={textEdit}
+          // onClick={()=>alert("click")}
+          onGotPointerCaptureCapture={textEdit}
+          // onClick={textClick}
+          style={{
+            whiteSpace: "pre",
+            fontFamily: "Arial, sans-serif",
+          }}
+        >
+          Text
+        </p>
+      </ScaleText>
+    );
+    addElement(node);
+  };
+
   return (
-    <div className={classes.root} style={{ backgroundImage: `url(${bg})` }}>
+    <div
+      className={classes.root}
+      ref={containerRef}
+      style={{ backgroundImage: `url(${bg})` }}
+      onClick={wrapperClick}
+    >
       {nodes.map(
         (ele, index) =>
           ele && (
@@ -216,7 +242,6 @@ const DragWrapper = () => {
                   className={ind === index ? classes.closeIco : classes.hidden}
                   onClick={() => handleDelete(index)}
                   onGotPointerCapture={() => handleDelete(index)}
-                
                 />
                 {ele}
               </div>
@@ -250,7 +275,8 @@ const DragWrapper = () => {
           value="text"
           icon={<TextFieldsIcon />}
           className={classes.nav}
-          onClick={() => setDialog("text")}
+          // onClick={() => setDialog("text")}
+          onClick={addTextElement}
         />
         <BottomNavigationAction
           label="Crop"
