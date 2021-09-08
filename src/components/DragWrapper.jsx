@@ -14,10 +14,10 @@ import CropIcon from "@material-ui/icons/Crop";
 import WallpaperIcon from "@material-ui/icons/Wallpaper";
 import Sticker from "./Sticker";
 // import Text  from "react-editable-and-draggable-text-2";
-import ScaleText from "react-scale-text";
 import ImageCropDialog from "./ImageCropDialog";
 import CloseIco from "@material-ui/icons/CloseRounded";
 import TextStyleBar from "./TextStyleBar";
+import TextComp from "./TextComp";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -192,25 +192,8 @@ const DragWrapper = () => {
   };
 
   const addTextElement = () => {
-    let node = (
-      <ScaleText>
-        <p
-          suppressContentEditableWarning
-          contentEditable
-          spellCheck={false}
-          onClick={textEdit}
-          // onClick={()=>alert("click")}
-          onGotPointerCaptureCapture={textEdit}
-          // onClick={textClick}
-          style={{
-            whiteSpace: "pre",
-            fontFamily: "Arial, sans-serif",
-          }}
-        >
-          Text
-        </p>
-      </ScaleText>
-    );
+    let t = "text";
+    let node = <TextComp textEdit={textEdit} />;
     addElement(node);
   };
 
