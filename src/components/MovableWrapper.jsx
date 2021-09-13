@@ -318,7 +318,7 @@ const MovableWrapper = () => {
               </div>
             )
         )}
-
+ 
         <BottomNavigation
           className={classes.bottomNav}
           onClick={() => setInd(-1)}
