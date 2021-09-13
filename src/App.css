@@ -4,7 +4,9 @@
   margin:0;
   border:0;
 }
-
+body{
+  overflow: hidden;
+}
 /* font-family: 'Architects Daughter', cursive;
 font-family: 'Caesar Dressing', cursive;
 font-family: 'Calligraffitti', cursive;

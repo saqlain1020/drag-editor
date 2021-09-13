@@ -16,6 +16,7 @@ import FormatAlignLeftIcon from "@material-ui/icons/FormatAlignLeft";
 import FormatAlignCenterIcon from "@material-ui/icons/FormatAlignCenter";
 import FormatAlignRightIcon from "@material-ui/icons/FormatAlignRight";
 import { v4 as uuid } from "uuid";
+import { SketchPicker } from 'react-color';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -100,7 +101,7 @@ const TextStyleBar = ({
   const classes = useStyles();
   const [colorOpen, setColorOpen] = React.useState(false);
   const [colorAnchor, setColorAnchor] = React.useState(null);
-  console.log(currentTextData);
+  const [color,setColor] = React.useState(currentTextData?.color || "black");
   const colorOpenClick = (e) => {
     setColorAnchor(e.currentTarget);
     setColorOpen(true);
@@ -108,6 +109,7 @@ const TextStyleBar = ({
 
   const colorSelect = (v) => {
     anchor.style.color = v;
+    setColor(v);
     setCurrentTextData({ ...currentTextData, color: v });
   };
 
@@ -255,8 +257,17 @@ const TextStyleBar = ({
           open={colorOpen}
           onClose={() => setColorOpen(false)}
           anchorEl={colorAnchor}
+          anchorOrigin={{
+            vertical: 'top',
+            horizontal: 'center',
+          }}
+          transformOrigin={{
+            vertical: 'bottom',
+            horizontal: 'center',
+          }}
         >
-          <Grid container style={{ width: 120 }}>
+          <SketchPicker color={color}  onChangeComplete={ (c)=>colorSelect(c.hex) }/>
+          {/* <Grid container style={{ width: 120 }}>
             {colors.map((item) => (
               <Grid key={item} item xs={4}>
                 <Button
@@ -274,7 +285,7 @@ const TextStyleBar = ({
                 </Button>
               </Grid>
             ))}
-          </Grid>
+          </Grid> */}
         </Popover>
       </Paper>
     </Popper>
