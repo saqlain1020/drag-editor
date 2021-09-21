@@ -21,6 +21,8 @@ import TextStyleBar from "./TextStyleBar";
 import TextComp from "./TextComp";
 import clsx from "clsx";
 import Moveable from "react-moveable";
+import { Save } from "@material-ui/icons";
+import KitchenIcon from "@material-ui/icons/Kitchen";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -29,9 +31,9 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
     overflow: "hidden",
     backgroundSize: "cover",
-    width:"100%",
-    maxWidth:"100vw",
-    border: "5px dashed blue"
+    width: "100%",
+    maxWidth: "100vw",
+    border: "5px dashed blue",
   },
   speedDial: {
     position: "absolute",
@@ -100,6 +102,21 @@ const MovableWrapper = () => {
   const [currentTextData, setCurrentTextData] = React.useState(null);
   const containerRef = React.useRef();
   const allRefs = React.useRef([]);
+  let json = React.useRef([]);
+  const [loaded, setLoaded] = React.useState(false);
+
+  React.useEffect(() => {
+
+    if (loaded) {
+      let data = JSON.parse(localStorage.getItem("json"));
+      data.forEach((item, ind) => {
+        allRefs.current[ind].style.transform = item.position;
+      });
+      setLoaded(false);
+    }
+    setTimeout(() => {
+    }, 1000);
+  }, [loaded]);
 
   const handleAddImage = () => {
     let input = document.createElement("input");
@@ -200,17 +217,92 @@ const MovableWrapper = () => {
   };
 
   const addTextElement = () => {
-    let t = "text";
-    let node = <TextComp textEdit={textEdit} />;
+    let t = "Text";
+    let node = <TextComp initialText={t} textEdit={textEdit} />;
     addElement(node);
   };
 
-  const movableOnClick = ({inputTarget})=>{
-    if(inputTarget.classList.contains("closeIcon")){
+  const movableOnClick = ({ inputTarget }) => {
+    if (inputTarget.classList.contains("closeIcon")) {
       let index = inputTarget.getAttribute("data-index");
-      handleDelete(index)
+      handleDelete(index);
     }
-  }
+  };
+
+  const targetEdit = (t) => {
+    //Text Node
+    if (t.childNodes[1].childNodes[0]) {
+      let styleObj = t.childNodes[1].childNodes[0].style;
+      let text = t.childNodes[1].childNodes[0].innerHTML;
+      let style = {
+        fontFamily: styleObj.fontFamily,
+        fontWeight: styleObj.fontWeight,
+        color: styleObj.color,
+        textDecoration: styleObj.textDecoration,
+        textAlign: styleObj.textAlign,
+      };
+      let obj = {
+        type: "text",
+        content: text,
+        styles: style,
+        transform: t.style.transform,
+        index: t.getAttribute("data-index"),
+      };
+      json.current[obj.index] = obj;
+    }
+    // Image srd sticker
+    else if (t.childNodes[1].src) {
+      let obj = {
+        type: "img",
+        src: t.childNodes[1].src,
+        transform: t.style.transform,
+        index: t.getAttribute("data-index"),
+      };
+      json.current[obj.index] = obj;
+    }
+  };
+  const saveFn = () => {
+    allRefs.current.forEach((item, ind) => {
+      if (item?.style) json.current[ind].position = item.style.transform;
+    });
+    localStorage.setItem("json", JSON.stringify(json.current));
+    localStorage.setItem("bg", bg);
+  };
+
+  const loadLocal = () => {
+    setNodes([]);
+    let data = JSON.parse(localStorage.getItem("json"));
+    json.current = data;
+    let nodes = [];
+    data.forEach((ele, ind) => {
+      if (ele.type === "text") {
+        let node = (
+          <TextComp
+            initialText={ele.content}
+            textEdit={textEdit}
+            styles={ele.styles}
+          />
+        );
+        nodes[ind] = node;
+      } else if ((ele.type = "img")) {
+        let node = (
+          <img
+            className={classes.nav}
+            src={ele.src}
+            alt=""
+            width="100%"
+            height="100%"
+          />
+        );
+        nodes[ind] = node;
+      }
+    });
+    setNodes([...nodes]);
+    setLoaded(true);
+    //BG get
+    let bg = localStorage.getItem("bg");
+    setBg(bg);
+  };
   return (
     <>
       <Moveable
@@ -250,51 +342,51 @@ const MovableWrapper = () => {
           target.style.transform = transform;
         }}
         onDragEnd={({ target, isDrag, clientX, clientY }) => {
+          targetEdit(target);
           // console.log("onDragEnd", target, isDrag);
         }}
         /* When resize or scale, keeps a ratio of the width, height. */
         keepRatio={false}
         /* scalable */
-            /* Only one of resizable, scalable, warpable can be used. */
-            scalable={true}
-            throttleScale={0}
-            onScaleStart={({ target, clientX, clientY }) => {
-                // console.log("onScaleStart", target);
-            }}
-            onScale={({
-                target, scale, dist, delta, transform,
-                clientX, clientY,
-            }, OnScale) => {
-                // console.log("onScale scale", scale);
-                target.style.transform = transform;
-            }}
-            onScaleEnd={({ target, isDrag, clientX, clientY }) => {
-                // console.log("onScaleEnd", target, isDrag);
-            }}
-
-            /* rotatable */
-            rotatable={true}
-            throttleRotate={0}
-            onRotateStart={({ target, clientX, clientY }) => {
-                // console.log("onRotateStart", target);
-            }}
-            onRotate={({
-                target,
-                delta, dist,
-                transform,
-                clientX, clientY,
-            }, onRotate) => {
-                // console.log("onRotate", dist);
-                target.style.transform = transform;
-            }}
-            onRotateEnd={({ target, isDrag, clientX, clientY }) => {
-                // console.log("onRotateEnd", target, isDrag);
-            }}
+        /* Only one of resizable, scalable, warpable can be used. */
+        scalable={true}
+        throttleScale={0}
+        onScaleStart={({ target, clientX, clientY }) => {
+          // console.log("onScaleStart", target);
+        }}
+        onScale={(
+          { target, scale, dist, delta, transform, clientX, clientY },
+          OnScale
+        ) => {
+          // console.log("onScale scale", scale);
+          target.style.transform = transform;
+        }}
+        onScaleEnd={({ target, isDrag, clientX, clientY }) => {
+          targetEdit(target);
+          // console.log("onScaleEnd", target, isDrag);
+        }}
+        /* rotatable */
+        rotatable={true}
+        throttleRotate={0}
+        onRotateStart={({ target, clientX, clientY }) => {
+          // console.log("onRotateStart", target);
+        }}
+        onRotate={(
+          { target, delta, dist, transform, clientX, clientY },
+          onRotate
+        ) => {
+          // console.log("onRotate", dist);
+          target.style.transform = transform;
+        }}
+        onRotateEnd={({ target, isDrag, clientX, clientY }) => {
+          targetEdit(target);
+          // console.log("onRotateEnd", target, isDrag);
+        }}
       />
       <div
         className={classes.root}
         ref={containerRef}
-        style={{ backgroundImage: `url(${bg})`}}
+        style={{ backgroundImage: `url(${bg})` }}
         onClick={wrapperClick}
       >
         {nodes.map(
@@ -309,7 +401,10 @@ const MovableWrapper = () => {
                 onClick={() => dragStart(null, index)}
               >
                 <CloseIco
-                  className={clsx(ind === index ? classes.closeIco : classes.hidden,"closeIcon")}
+                  className={clsx(
+                    ind === index ? classes.closeIco : classes.hidden,
+                    "closeIcon"
+                  )}
                   onClick={() => handleDelete(index)}
                   onGotPointerCapture={() => handleDelete(index)}
                   data-index={index}
@@ -318,7 +413,7 @@ const MovableWrapper = () => {
               </div>
             )
         )}
- 
+
         <BottomNavigation
           className={classes.bottomNav}
           onClick={() => setInd(-1)}
@@ -354,6 +449,20 @@ const MovableWrapper = () => {
             icon={<CropIcon />}
             className={classes.nav}
             onClick={() => setDialog("crop")}
+          />
+          <BottomNavigationAction
+            label="Save"
+            value="save"
+            icon={<Save />}
+            className={classes.nav}
+            onClick={saveFn}
+          />
+          <BottomNavigationAction
+            label="Load"
+            value="load"
+            icon={<KitchenIcon />}
+            className={classes.nav}
+            onClick={loadLocal}
           />
         </BottomNavigation>
         <TextDialog
