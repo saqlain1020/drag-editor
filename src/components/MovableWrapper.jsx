@@ -23,17 +23,24 @@ import clsx from "clsx";
 import Moveable from "react-moveable";
 import { Save } from "@material-ui/icons";
 import KitchenIcon from "@material-ui/icons/Kitchen";
+import { useScreenshot } from "use-react-screenshot";
+import CropOriginalIcon from "@material-ui/icons/CropOriginal";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    height: "100vh",
+    height: "100%",
     position: "relative",
     width: "100%",
     overflow: "hidden",
     backgroundSize: "cover",
     width: "100%",
     maxWidth: "100vw",
+  },
+  wrapper: {
     border: "5px dashed blue",
+    display: "grid",
+    gridTemplateRows: "1fr min-content",
+    height: "100vh",
   },
   speedDial: {
     position: "absolute",
@@ -48,9 +55,9 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   bottomNav: {
-    position: "absolute",
+    // position: "absolute",
     width: "100%",
-    bottom: 0,
+    // bottom: 0,
   },
   nav: {
     // "&:focus": {
@@ -104,9 +111,22 @@ const MovableWrapper = () => {
   const allRefs = React.useRef([]);
   let json = React.useRef([]);
   const [loaded, setLoaded] = React.useState(false);
+  const [image, takeScreenShot] = useScreenshot({
+    type: "image/jpeg",
+    quality: 1.0,
+  });
+
+  const download = (image, { name = "img", extension = "jpg" } = {}) => {
+    const a = document.createElement("a");
+    a.href = image;
+    a.download = "img.jpg";
+    a.click();
+  };
+
+  const downloadScreenshot = () =>
+    takeScreenShot(containerRef.current).then(download);
 
   React.useEffect(() => {
-
     if (loaded) {
       let data = JSON.parse(localStorage.getItem("json"));
       data.forEach((item, ind) => {
@@ -114,8 +134,7 @@ const MovableWrapper = () => {
       });
       setLoaded(false);
     }
-    setTimeout(() => {
-    }, 1000);
+    setTimeout(() => {}, 1000);
   }, [loaded]);
 
   const handleAddImage = () => {
@@ -383,36 +402,38 @@ const MovableWrapper = () => {
           // console.log("onRotateEnd", target, isDrag);
         }}
       />
-      <div
-        className={classes.root}
-        ref={containerRef}
-        style={{ backgroundImage: `url(${bg})` }}
-        onClick={wrapperClick}
-      >
-        {nodes.map(
-          (ele, index) =>
-            ele && (
-              <div
-                data-index={index}
-                key={index}
-                style={{ width: 300, height: 300 }}
-                className={clsx(classes.eleWrap, "target")}
-                ref={(el) => (allRefs.current[index] = el)}
-                onClick={() => dragStart(null, index)}
-              >
-                <CloseIco
-                  className={clsx(
-                    ind === index ? classes.closeIco : classes.hidden,
-                    "closeIcon"
-                  )}
-                  onClick={() => handleDelete(index)}
-                  onGotPointerCapture={() => handleDelete(index)}
+      <div className={classes.wrapper}>
+        <div
+          className={classes.root}
+          ref={containerRef}
+          style={{ backgroundImage: `url(${bg})` }}
+          onClick={wrapperClick}
+        >
+          {nodes.map(
+            (ele, index) =>
+              ele && (
+                <div
                   data-index={index}
-                />
-                {ele}
-              </div>
-            )
-        )}
+                  key={index}
+                  style={{ width: 300, height: 300 }}
+                  className={clsx(classes.eleWrap, "target")}
+                  ref={(el) => (allRefs.current[index] = el)}
+                  onClick={() => dragStart(null, index)}
+                >
+                  <CloseIco
+                    className={clsx(
+                      ind === index ? classes.closeIco : classes.hidden,
+                      "closeIcon"
+                    )}
+                    onClick={() => handleDelete(index)}
+                    onGotPointerCapture={() => handleDelete(index)}
+                    data-index={index}
+                  />
+                  {ele}
+                </div>
+              )
+          )}
+        </div>
 
         <BottomNavigation
           className={classes.bottomNav}
@@ -464,35 +485,42 @@ const MovableWrapper = () => {
             className={classes.nav}
             onClick={loadLocal}
           />
+          <BottomNavigationAction
+            label="Screenshot"
+            value="Screenshot"
+            icon={<CropOriginalIcon />}
+            className={classes.nav}
+            onClick={downloadScreenshot}
+          />
         </BottomNavigation>
-        <TextDialog
-          open={dialog === "text"}
-          onClose={closeDialog}
-          addElement={addElement}
-          textEdit={textEdit}
-          textClick={textClick}
-        />
-        <ImageCropDialog
-          imgSrc={bg}
-          setImg={setBg}
-          open={dialog === "crop"}
-          onClose={closeDialog}
-          addElement={addElement}
-        />
-        <Sticker
-          anchorEl={stickerAnchor}
-          open={!!stickerOpen}
-          onClose={() => setStickerOpen(null)}
-          handleSticker={handleSticker}
-        />
-        <TextStyleBar
-          open={!!textAnchor}
-          anchor={textAnchor}
-          onClose={() => setTextAnchor(null)}
-          currentTextData={currentTextData}
-          setCurrentTextData={setCurrentTextData}
-        />
       </div>
+      <TextDialog
+        open={dialog === "text"}
+        onClose={closeDialog}
+        addElement={addElement}
+        textEdit={textEdit}
+        textClick={textClick}
+      />
+      <ImageCropDialog
+        imgSrc={bg}
+        setImg={setBg}
+        open={dialog === "crop"}
+        onClose={closeDialog}
+        addElement={addElement}
+      />
+      <Sticker
+        anchorEl={stickerAnchor}
+        open={!!stickerOpen}
+        onClose={() => setStickerOpen(null)}
+        handleSticker={handleSticker}
+      />
+      <TextStyleBar
+        open={!!textAnchor}
+        anchor={textAnchor}
+        onClose={() => setTextAnchor(null)}
+        currentTextData={currentTextData}
+        setCurrentTextData={setCurrentTextData}
+      />
     </>
   );
 };
