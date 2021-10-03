@@ -274,6 +274,7 @@ const MovableWrapper = () => {
     }
   };
   const saveFn = () => {
+    console.log(json.current);
     allRefs.current.forEach((item, ind) => {
       if (item?.style) json.current[ind].position = item.style.transform;
     });
