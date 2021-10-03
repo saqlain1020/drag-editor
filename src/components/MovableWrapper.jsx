@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
     border: "5px dashed blue",
     display: "grid",
     gridTemplateRows: "1fr min-content",
-    height: "100vh",
+    height: "100%",
   },
   speedDial: {
     position: "absolute",
@@ -60,16 +60,13 @@ const useStyles = makeStyles((theme) => ({
     // bottom: 0,
   },
   nav: {
-    // "&:focus": {
-    //   outline: "1px dashed blue",
-    // },
+
   },
   element: {
     outline: "1px solid blue",
     position: "relative",
 
-    // "&:focus": {
-    // },
+    
   },
   eleWrap: {
     width: "100%",
@@ -90,11 +87,7 @@ const useStyles = makeStyles((theme) => ({
     display: "none !important",
   },
 }));
-const actions = [
-  { name: "Text", icon: <TextFieldsIcon />, value: "text" },
-  { name: "Image", icon: <ImageIcon />, value: "image" },
-  { name: "Box", icon: <CheckBoxOutlineBlankIcon />, value: "box" },
-];
+
 var target = null;
 
 const MovableWrapper = () => {
@@ -286,6 +279,8 @@ const MovableWrapper = () => {
     });
     localStorage.setItem("json", JSON.stringify(json.current));
     localStorage.setItem("bg", bg);
+    console.log("Json:",json.current);
+    console.log("Bg",bg);
   };
 
   const loadLocal = () => {
