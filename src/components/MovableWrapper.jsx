@@ -127,7 +127,6 @@ const MovableWrapper = () => {
       });
       setLoaded(false);
     }
-    setTimeout(() => {}, 1000);
   }, [loaded]);
 
   const handleAddImage = () => {
@@ -242,6 +241,7 @@ const MovableWrapper = () => {
   };
 
   const targetEdit = (t) => {
+    console.log("before targer",json)
     //Text Node
     if (t.childNodes[1].childNodes[0]) {
       let styleObj = t.childNodes[1].childNodes[0].style;
@@ -272,9 +272,11 @@ const MovableWrapper = () => {
       };
       json.current[obj.index] = obj;
     }
+    console.log("after targer",json)
   };
   const saveFn = () => {
-    console.log(json.current);
+    console.log("before save",json);
+    console.log("All",allRefs)
     allRefs.current.forEach((item, ind) => {
       if (item?.style) json.current[ind].position = item.style.transform;
     });
