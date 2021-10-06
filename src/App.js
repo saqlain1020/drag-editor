@@ -9,11 +9,11 @@ function App() {
     <div style={{ maxWidth: "100vw", overflow: "hidden" }}>
       <div
         style={{
-          width: 700,
-          height: 400,
+          width: "100%",
+          height: "100%",
           position: "absolute",
-          top: 100,
-          left: 150,
+          top: 0,
+          left: 0,
         }}
       >
         <MovableWrapper />
